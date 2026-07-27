@@ -1,2 +1,4 @@
 .claude/
 LEARNING.md
+.venv/
+__pycache__/
