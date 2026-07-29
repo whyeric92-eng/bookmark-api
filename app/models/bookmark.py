@@ -9,3 +9,13 @@ class Bookmark(SQLModel, table=True):
     title: str
     notes: str | None = None
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc), nullable=False)
+
+class BookmarkCreate(SQLModel):
+    url: str
+    title: str
+    notes: str | None = None
+
+class BookmarkUpdate(SQLModel):
+    url: str | None = None
+    title: str | None = None
+    notes: str | None = None
