@@ -1,5 +1,6 @@
 from datetime import datetime, timezone
-from sqlmodel import Field, SQLModel
+from sqlmodel import Field, SQLModel, Relationship
+from app.models.tag import TagLink
 
 class Bookmark(SQLModel, table=True):
     __tablename__ = "bookmark"
@@ -9,6 +10,7 @@ class Bookmark(SQLModel, table=True):
     title: str
     notes: str | None = None
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc), nullable=False)
+    tags: list["Tag"] = Relationship(back_populates="bookmarks", link_model=TagLink)
 
 class BookmarkCreate(SQLModel):
     url: str
