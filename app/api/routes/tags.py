@@ -1,11 +1,16 @@
 from fastapi import APIRouter, status
 from app.db.session import SessionDep
-from app.models import Tag
+from app.models import Tag, Bookmark
 from app.models.tag import TagCreate, TagUpdate
-from sqlmodel import select
+from sqlmodel import select, SQLModel
 from app.api.deps import TagDep
 
 router = APIRouter(prefix="/tags", tags=["tags"])
+
+class TagPublicWithBookmarks(SQLModel):
+    tag_id: int
+    tag: str
+    bookmarks: list[Bookmark] = []
 
 @router.post('', response_model=Tag)
 def create_tag(payload: TagCreate, session: SessionDep):
@@ -21,7 +26,7 @@ def get_tags(session: SessionDep):
     tags = session.exec(statement).all()
     return tags
 
-@router.get('/{tag_id}', response_model=Tag)
+@router.get('/{tag_id}', response_model=TagPublicWithBookmarks)
 def get_specific_tag(tag: TagDep):
     return tag
 
