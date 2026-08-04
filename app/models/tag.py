@@ -12,3 +12,9 @@ class Tag(SQLModel, table = True):
     tag_id: int | None = Field(default=None, primary_key=True)
     tag: str
     bookmarks: list["Bookmark"] = Relationship(back_populates="tags", link_model=TagLink)
+
+class TagCreate(SQLModel):
+    tag: str
+
+class TagUpdate(SQLModel):
+    tag: str
