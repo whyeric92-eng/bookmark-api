@@ -1,4 +1,4 @@
-from sqlmodel import select, SQLModel
+from sqlmodel import select, SQLModel, or_
 from fastapi import HTTPException, status, APIRouter
 from app.db.session import SessionDep
 from app.models import Bookmark,Tag
@@ -29,8 +29,18 @@ def create_bookmark(payload: BookmarkCreate, session: SessionDep):
     return bookmark
 
 @router.get("", response_model=list[Bookmark])
-def get_bookmarks(session: SessionDep):
+def get_bookmarks(session: SessionDep, tag :str | None = None, q: str | None = None):
     statement = select(Bookmark)
+    if tag:
+        statement = statement.where(Bookmark.tags.any(Tag.tag == tag))
+    if q:
+        statement = statement.where(
+            or_(
+                Bookmark.title.ilike(f"%{q}%"),
+                Bookmark.url.ilike(f"%{q}%"),
+                Bookmark.notes.ilike(f"%{q}%"),
+            )
+        )
     bookmarks = session.exec(statement).all()
     return bookmarks
 
