@@ -1,23 +1,20 @@
-from typing import Annotated
-
-from sqlmodel import select
-from fastapi import Depends, HTTPException, status, APIRouter
-
+from sqlmodel import select, SQLModel
+from fastapi import HTTPException, status, APIRouter
 from app.db.session import SessionDep
-from app.models import Bookmark
+from app.models import Bookmark,Tag
 from app.models.bookmark import BookmarkCreate, BookmarkUpdate
+from app.api.deps import BookmarkDep,TagDep
+from datetime import datetime
 
 router = APIRouter(prefix="/bookmarks", tags=["bookmarks"])
 
-
-def get_bookmark_or_404(bookmark_id: int, session: SessionDep) -> Bookmark:
-    bookmark = session.get(Bookmark, bookmark_id)
-    if bookmark is None:
-        raise HTTPException(status_code=404, detail="Bookmark not found")
-    return bookmark
-
-
-BookmarkDep = Annotated[Bookmark, Depends(get_bookmark_or_404)]
+class BookmarkPublicWithTags(SQLModel):
+    bookmark_id: int
+    url: str
+    title: str
+    notes: str | None
+    created_at: datetime
+    tags: list[Tag] = []
 
 @router.post("", response_model=Bookmark)
 def create_bookmark(payload: BookmarkCreate, session: SessionDep):
@@ -37,7 +34,7 @@ def get_bookmarks(session: SessionDep):
     bookmarks = session.exec(statement).all()
     return bookmarks
 
-@router.get("/{bookmark_id}", response_model=Bookmark)
+@router.get("/{bookmark_id}", response_model=BookmarkPublicWithTags )
 def get_specific_bookmark(bookmark: BookmarkDep):
     return bookmark
 
@@ -55,4 +52,18 @@ def update_specific_bookmark(bookmark: BookmarkDep, payload: BookmarkUpdate, ses
 @router.delete("/{bookmark_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_specific_bookmark(bookmark: BookmarkDep, session: SessionDep):
     session.delete(bookmark)
+    session.commit()
+
+@router.post("/{bookmark_id}/tags/{tag_id}", status_code=status.HTTP_204_NO_CONTENT)
+def connect(bookmark: BookmarkDep, tag: TagDep, session: SessionDep):
+    if tag in bookmark.tags:
+        raise HTTPException(status_code=400, detail="Tag already linked to this bookmark")
+    bookmark.tags.append(tag)
+    session.commit()
+
+@router.delete("/{bookmark_id}/tags/{tag_id}", status_code=status.HTTP_204_NO_CONTENT)
+def disconnect(bookmark: BookmarkDep, tag: TagDep, session: SessionDep):
+    if tag not in bookmark.tags:
+        raise HTTPException(status_code=404, detail="Tag is not linked to this bookmark")
+    bookmark.tags.remove(tag)
     session.commit()
