@@ -1,9 +1,11 @@
 from datetime import datetime, timezone
 from sqlmodel import Field, SQLModel, Relationship
+from sqlalchemy import UniqueConstraint
 from app.models.tag import TagLink
 
 class Bookmark(SQLModel, table=True):
     __tablename__ = "bookmark"
+    __table_args__ = (UniqueConstraint("user_id", "url"),)
 
     bookmark_id: int | None = Field(default=None, primary_key=True)
     url: str
