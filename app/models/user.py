@@ -11,6 +11,7 @@ class User(SQLModel, table=True):
     username: str = Field(unique=True, index=True)
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc), nullable=False)
     bookmarks: list["Bookmark"] = Relationship(back_populates="owner")
+    tags: list["Tag"] = Relationship(back_populates="owner")
 
 class UserCreate(SQLModel):
     username: str
