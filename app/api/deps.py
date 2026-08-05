@@ -1,7 +1,10 @@
 from typing import Annotated
 from fastapi import Depends, HTTPException
-from app.models import Bookmark, Tag
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+import jwt
+from app.models import Bookmark, Tag, User
 from app.db.session import SessionDep
+from app.core.security import decode_access_token
 
 def get_bookmark_or_404(bookmark_id: int, session: SessionDep) -> Bookmark:
     bookmark = session.get(Bookmark, bookmark_id)
@@ -18,3 +21,22 @@ def get_tag_or_404(tag_id: int, session: SessionDep) -> Tag:
     return tag
 
 TagDep = Annotated[Tag, Depends(get_tag_or_404)]
+
+bearer_scheme = HTTPBearer()
+
+def get_current_user(
+    credentials: Annotated[HTTPAuthorizationCredentials, Depends(bearer_scheme)],
+    session: SessionDep,
+) -> User:
+    try:
+        payload = decode_access_token(credentials.credentials)
+    except jwt.InvalidTokenError:
+        raise HTTPException(status_code=401, detail="Invalid or expired token")
+
+    user_id = payload.get("sub")
+    user = session.get(User, int(user_id)) if user_id else None
+    if user is None:
+        raise HTTPException(status_code=401, detail="Invalid or expired token")
+    return user
+
+CurrentUserDep = Annotated[User, Depends(get_current_user)]
