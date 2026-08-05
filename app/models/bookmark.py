@@ -11,6 +11,8 @@ class Bookmark(SQLModel, table=True):
     notes: str | None = None
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc), nullable=False)
     tags: list["Tag"] = Relationship(back_populates="bookmarks", link_model=TagLink)
+    user_id: int = Field(foreign_key="user.user_id", index=True)
+    owner: "User" = Relationship(back_populates="bookmarks")
 
 class BookmarkCreate(SQLModel):
     url: str
