@@ -3,8 +3,9 @@ from fastapi import HTTPException, status, APIRouter
 from app.db.session import SessionDep
 from app.models import Bookmark,Tag
 from app.models.bookmark import BookmarkCreate, BookmarkUpdate
-from app.api.deps import BookmarkDep,TagDep
+from app.api.deps import BookmarkDep,TagDep,CurrentUserDep
 from datetime import datetime
+from sqlalchemy.exc import IntegrityError
 
 router = APIRouter(prefix="/bookmarks", tags=["bookmarks"])
 
@@ -17,20 +18,25 @@ class BookmarkPublicWithTags(SQLModel):
     tags: list[Tag] = []
 
 @router.post("", response_model=Bookmark)
-def create_bookmark(payload: BookmarkCreate, session: SessionDep):
+def create_bookmark(payload: BookmarkCreate, session: SessionDep, current_user: CurrentUserDep):
     bookmark = Bookmark(
         url=payload.url,
         title=payload.title,
         notes=payload.notes,
+        user_id=current_user.user_id,
     )
     session.add(bookmark)
-    session.commit()
+    try:
+        session.commit()
+    except IntegrityError:
+        session.rollback()
+        raise HTTPException(status_code=400, detail="bookmark url already existed")
     session.refresh(bookmark)
     return bookmark
 
 @router.get("", response_model=list[Bookmark])
-def get_bookmarks(session: SessionDep, tag :str | None = None, q: str | None = None):
-    statement = select(Bookmark)
+def get_bookmarks(current_user: CurrentUserDep, session: SessionDep, tag :str | None = None, q: str | None = None):
+    statement = select(Bookmark).where(Bookmark.user_id == current_user.user_id)
     if tag:
         statement = statement.where(Bookmark.tags.any(Tag.tag == tag))
     if q:
@@ -55,7 +61,11 @@ def update_specific_bookmark(bookmark: BookmarkDep, payload: BookmarkUpdate, ses
         setattr(bookmark, key, value)
 
     session.add(bookmark)
-    session.commit()
+    try:
+        session.commit()
+    except IntegrityError:
+        session.rollback()
+        raise HTTPException(status_code=400, detail="bookmark url already existed")
     session.refresh(bookmark)
     return bookmark
 
