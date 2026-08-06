@@ -27,6 +27,10 @@ class UserLogin(SQLModel):
     email: str
     password: str
 
+class UserUpdate(SQLModel):
+    username: str | None = None
+    email: str | None = None
+
 class Token(SQLModel):
     access_token: str
     token_type: str = "bearer"

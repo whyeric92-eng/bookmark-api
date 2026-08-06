@@ -5,7 +5,7 @@ from sqlalchemy.exc import IntegrityError
 from app.api.deps import CurrentUserDep
 from app.core.security import create_access_token, hash_password, verify_password
 from app.db.session import SessionDep
-from app.models.user import User, UserCreate, UserLogin, UserProfile, Token
+from app.models.user import User, UserCreate, UserLogin, UserProfile, UserUpdate, Token
 
 
 router = APIRouter(prefix="/users", tags=["users"])
@@ -37,6 +37,21 @@ def login(payload: UserLogin, session: SessionDep):
 
 @router.get("/profile", response_model=UserProfile)
 def get_profile(current_user: CurrentUserDep):
+    return current_user
+
+@router.patch("/profile", response_model=UserProfile)
+def update_profile(payload: UserUpdate, current_user: CurrentUserDep, session: SessionDep):
+    updates = payload.model_dump(exclude_unset=True)
+    for key, value in updates.items():
+        setattr(current_user, key, value)
+
+    session.add(current_user)
+    try:
+        session.commit()
+    except IntegrityError:
+        session.rollback()
+        raise HTTPException(status_code=400, detail="Email or username already taken")
+    session.refresh(current_user)
     return current_user
 
 @router.post("/logout")
