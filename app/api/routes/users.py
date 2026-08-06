@@ -1,5 +1,6 @@
 from fastapi import APIRouter, HTTPException
 from sqlmodel import select
+from sqlalchemy.exc import IntegrityError
 
 from app.api.deps import CurrentUserDep
 from app.core.security import create_access_token, hash_password, verify_password
@@ -17,7 +18,11 @@ def register(payload: UserCreate, session: SessionDep):
         hashed_password=hash_password(payload.password)
     )
     session.add(user)
-    session.commit()
+    try:
+        session.commit()
+    except IntegrityError:
+        session.rollback()
+        raise HTTPException(status_code=400, detail="Email or username already registered")
     session.refresh(user)
     return user
 

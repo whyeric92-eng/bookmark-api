@@ -1,4 +1,5 @@
-from fastapi import APIRouter, status
+from fastapi import APIRouter, HTTPException, status
+from sqlalchemy.exc import IntegrityError
 from app.db.session import SessionDep
 from app.models import Tag, Bookmark
 from app.models.tag import TagCreate, TagUpdate
@@ -18,7 +19,11 @@ def create_tag(payload: TagCreate, session: SessionDep, current_user: CurrentUse
         tag=payload.tag,
         user_id=current_user.user_id)
     session.add(tag)
-    session.commit()
+    try:
+        session.commit()
+    except IntegrityError:
+        session.rollback()
+        raise HTTPException(status_code=400, detail="tag name already existed")
     session.refresh(tag)
     return tag
 
@@ -36,7 +41,11 @@ def get_specific_tag(tag: TagDep):
 def update_tag(tag: TagDep, payload: TagUpdate, session: SessionDep):
     tag.tag = payload.tag
     session.add(tag)
-    session.commit()
+    try:
+        session.commit()
+    except IntegrityError:
+        session.rollback()
+        raise HTTPException(status_code=400, detail="tag name already existed")
     session.refresh(tag)
     return tag
 

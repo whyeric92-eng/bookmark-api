@@ -5,6 +5,7 @@ from app.models import Bookmark,Tag
 from app.models.bookmark import BookmarkCreate, BookmarkUpdate
 from app.api.deps import BookmarkDep,TagDep,CurrentUserDep
 from datetime import datetime
+from sqlalchemy.exc import IntegrityError
 
 router = APIRouter(prefix="/bookmarks", tags=["bookmarks"])
 
@@ -25,7 +26,11 @@ def create_bookmark(payload: BookmarkCreate, session: SessionDep, current_user: 
         user_id=current_user.user_id,
     )
     session.add(bookmark)
-    session.commit()
+    try:
+        session.commit()
+    except IntegrityError:
+        session.rollback()
+        raise HTTPException(status_code=400, detail="bookmark url already existed")
     session.refresh(bookmark)
     return bookmark
 
@@ -56,7 +61,11 @@ def update_specific_bookmark(bookmark: BookmarkDep, payload: BookmarkUpdate, ses
         setattr(bookmark, key, value)
 
     session.add(bookmark)
-    session.commit()
+    try:
+        session.commit()
+    except IntegrityError:
+        session.rollback()
+        raise HTTPException(status_code=400, detail="bookmark url already existed")
     session.refresh(bookmark)
     return bookmark
 
