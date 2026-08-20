@@ -1,38 +1,37 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
-import { apiFetch } from './api'
-import './App.css'
+import { Link, useNavigate } from 'react-router-dom'
+import { apiFetch, parseErrorDetail } from '../api'
+import './Auth.css'
 
-function Register() {
-  const [username, setUsername] = useState('')
+function Login() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
+  const navigate = useNavigate()
+
 
   async function handleSubmit(e) {
     e.preventDefault()
     setError('')
     setSuccess(false)
     try {
-      const res = await apiFetch('/users/register', {
+      const res = await apiFetch('/users/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, email, password })
+        body: JSON.stringify({ email, password })
       })
       const data = await res.json()
 
       if (res.ok) {
         setSuccess(true)
+        localStorage.setItem('token', data.access_token)
+        navigate('/')
       } else {
         setSuccess(false)
-        if (Array.isArray(data.detail)) {
-          setError(data.detail.map((item) => item.msg).join(', '))
-        } else {
-          setError(data.detail)
-        }
+        setError(parseErrorDetail(data))
       }
-    } catch (err) {
+    } catch(err) {
       setSuccess(false)
       setError('Cannot connect to the server')
     }
@@ -41,16 +40,7 @@ function Register() {
   return (
     <div className="auth-page">
       <form className="auth-form" onSubmit={handleSubmit}>
-        <h1>Register</h1>
-
-        <label>
-          Username
-          <input
-            type="text"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-          />
-        </label>
+        <h1>Login</h1>
 
         <label>
           Email
@@ -70,17 +60,17 @@ function Register() {
           />
         </label>
 
-        <button type="submit">Register</button>
+        <button type="submit">Login</button>
 
         {error && <p className="form-error">{error}</p>}
-        {success && <p className="form-success">Registered successfully.</p>}
+        {success && <p className="form-success">Logged in successfully.</p>}
 
         <p className="auth-switch">
-          Already have an account? <Link to="/login">Log in</Link>
+          No account yet? <Link to="/register">Register</Link>
         </p>
       </form>
     </div>
   )
 }
 
-export default Register
+export default Login

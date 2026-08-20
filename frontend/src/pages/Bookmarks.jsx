@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react"
-import { apiFetch } from './api'
-import NavBar from './NavBar'
+import { apiFetch, parseErrorDetail } from '../api'
+import NavBar from '../components/NavBar'
 import './Bookmarks.css'
 
 function Bookmarks() {
@@ -91,11 +91,7 @@ function Bookmarks() {
                 get_bookmarks(q)
             } else {
                 setSuccess(false)
-                if (Array.isArray(data.detail)) {
-                    setFormError(data.detail.map((item) => item.msg).join(', '))
-                } else {
-                    setFormError(data.detail)
-                }
+                setFormError(parseErrorDetail(data))
             }
         } catch(err) {
             setFormError("Cannot connect to the server")
@@ -145,11 +141,7 @@ function Bookmarks() {
                 setEditingId(null)
                 get_bookmarks(q)
             } else {
-                if (Array.isArray(data.detail)) {
-                    setEditError(data.detail.map((item) => item.msg).join(', '))
-                } else {
-                    setEditError(data.detail)
-                }
+                setEditError(parseErrorDetail(data))
             }
         } catch (err) {
             setEditError('Cannot connect to the server')
@@ -165,7 +157,7 @@ function Bookmarks() {
                 get_bookmarks(q)
             } else {
                 const data = await res.json()
-                setFormError(Array.isArray(data.detail) ? data.detail.map((item) => item.msg).join(', ') : data.detail)
+                setFormError(parseErrorDetail(data))
             }
         } catch (err) {
             setFormError('Cannot connect to the server')

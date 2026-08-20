@@ -78,18 +78,3 @@
   gap: 8px;
 }
 
-.profile-form .form-error,
-.profile-view .form-error,
-.profile-view .form-success {
-  margin: 0;
-  font-size: 14px;
-}
-
-.profile-form .form-error,
-.profile-view .form-error {
-  color: #e5484d;
-}
-
-.profile-view .form-success {
-  color: #30a46c;
-}

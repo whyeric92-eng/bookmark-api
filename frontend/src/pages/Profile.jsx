@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
-import { apiFetch } from './api'
-import NavBar from './NavBar'
+import { apiFetch, parseErrorDetail } from '../api'
+import NavBar from '../components/NavBar'
 import './Profile.css'
 
 function Profile() {
@@ -67,11 +67,7 @@ function Profile() {
                 setEditing(false)
                 setSuccess(true)
             } else {
-                if (Array.isArray(data.detail)) {
-                    setFormError(data.detail.map((item) => item.msg).join(', '))
-                } else {
-                    setFormError(data.detail)
-                }
+                setFormError(parseErrorDetail(data))
             }
         } catch (err) {
             setFormError('Cannot connect to the server')

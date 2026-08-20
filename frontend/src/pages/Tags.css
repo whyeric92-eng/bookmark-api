@@ -6,17 +6,6 @@
   padding: 24px;
 }
 
-.tags-page-header {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-}
-
-.tags-page-header a {
-  font-size: 14px;
-  color: var(--accent);
-}
-
 .tags-status {
   text-align: center;
   color: var(--text);
@@ -53,17 +42,8 @@
 }
 
 .tag-form .form-error,
-.tag-edit-form .form-error {
-  margin: 0;
-  font-size: 14px;
-  color: #e5484d;
-  flex-basis: 100%;
-}
-
+.tag-edit-form .form-error,
 .tag-form .form-success {
-  margin: 0;
-  font-size: 14px;
-  color: #30a46c;
   flex-basis: 100%;
 }
 

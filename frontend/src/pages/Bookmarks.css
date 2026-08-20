@@ -77,29 +77,6 @@
   opacity: 0.9;
 }
 
-.bookmark-form .form-error {
-  margin: 0;
-  font-size: 14px;
-  color: #e5484d;
-}
-
-.bookmark-form .form-success {
-  margin: 0;
-  font-size: 14px;
-  color: #30a46c;
-}
-
-.bookmarks-page-header {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-}
-
-.bookmarks-page-header a {
-  font-size: 14px;
-  color: var(--accent);
-}
-
 .bookmarks-status {
   text-align: center;
   color: var(--text);
@@ -205,12 +182,6 @@
   background: var(--accent);
   border-color: var(--accent);
   color: white;
-}
-
-.bookmark-edit-form .form-error {
-  margin: 0;
-  font-size: 14px;
-  color: #e5484d;
 }
 
 .bookmark-title:hover {

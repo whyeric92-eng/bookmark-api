@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
-import { apiFetch } from './api'
-import NavBar from './NavBar'
+import { apiFetch, parseErrorDetail } from '../api'
+import NavBar from '../components/NavBar'
 import './Tags.css'
 
 function Tags() {
@@ -57,11 +57,7 @@ function Tags() {
                 get_tags()
             } else {
                 setSuccess(false)
-                if (Array.isArray(data.detail)) {
-                    setFormError(data.detail.map((item) => item.msg).join(', '))
-                } else {
-                    setFormError(data.detail)
-                }
+                setFormError(parseErrorDetail(data))
             }
         } catch (err) {
             setFormError('Cannot connect to the server')
@@ -109,11 +105,7 @@ function Tags() {
                 setEditingId(null)
                 get_tags()
             } else {
-                if (Array.isArray(data.detail)) {
-                    setEditError(data.detail.map((item) => item.msg).join(', '))
-                } else {
-                    setEditError(data.detail)
-                }
+                setEditError(parseErrorDetail(data))
             }
         } catch (err) {
             setEditError('Cannot connect to the server')

@@ -1,10 +1,10 @@
-import Register from './Register'
-import Login from './Login'
-import Bookmarks from './Bookmarks'
-import Tags from './Tags'
-import Profile from './Profile'
+import Register from './pages/Register'
+import Login from './pages/Login'
+import Bookmarks from './pages/Bookmarks'
+import Tags from './pages/Tags'
+import Profile from './pages/Profile'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import ProtectedRoute from './ProtectedRoute'
+import ProtectedRoute from './components/ProtectedRoute'
 
 function App() {
 

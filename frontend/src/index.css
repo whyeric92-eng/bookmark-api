@@ -109,3 +109,13 @@ code {
   padding: 4px 8px;
   background: var(--code-bg);
 }
+
+.form-error {
+  font-size: 14px;
+  color: #e5484d;
+}
+
+.form-success {
+  font-size: 14px;
+  color: #30a46c;
+}

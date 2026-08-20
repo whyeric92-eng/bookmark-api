@@ -10,3 +10,9 @@ export function apiFetch(path, options = {}) {
 
   return fetch(`${BASE_URL}${path}`, { ...options, headers })
 }
+
+export function parseErrorDetail(data) {
+  return Array.isArray(data.detail)
+    ? data.detail.map((item) => item.msg).join(', ')
+    : data.detail
+}
