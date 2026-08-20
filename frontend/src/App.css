@@ -68,4 +68,15 @@
     font-size: 14px;
     color: #30a46c;
   }
+
+  .auth-switch {
+    margin: 0;
+    font-size: 14px;
+    color: var(--text);
+    text-align: center;
+
+    a {
+      color: var(--accent);
+    }
+  }
 }

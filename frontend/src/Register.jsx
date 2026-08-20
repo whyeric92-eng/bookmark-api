@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import { apiFetch } from './api'
 import './App.css'
 
@@ -73,6 +74,10 @@ function Register() {
 
         {error && <p className="form-error">{error}</p>}
         {success && <p className="form-success">Registered successfully.</p>}
+
+        <p className="auth-switch">
+          Already have an account? <Link to="/login">Log in</Link>
+        </p>
       </form>
     </div>
   )

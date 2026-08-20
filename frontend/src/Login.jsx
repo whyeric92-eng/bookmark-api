@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 import { apiFetch } from './api'
 import './App.css'
 
@@ -7,6 +8,7 @@ function Login() {
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
+  const navigate = useNavigate()
 
 
   async function handleSubmit(e) {
@@ -24,6 +26,7 @@ function Login() {
       if (res.ok) {
         setSuccess(true)
         localStorage.setItem('token', data.access_token)
+        navigate('/')
       } else {
         setSuccess(false)
         if (Array.isArray(data.detail)) {
@@ -65,6 +68,10 @@ function Login() {
 
         {error && <p className="form-error">{error}</p>}
         {success && <p className="form-success">Logged in successfully.</p>}
+
+        <p className="auth-switch">
+          No account yet? <Link to="/register">Register</Link>
+        </p>
       </form>
     </div>
   )
