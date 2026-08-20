@@ -6,6 +6,37 @@
   padding: 24px;
 }
 
+.bookmark-search {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.bookmark-search input {
+  flex-grow: 1;
+  font: inherit;
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text-h);
+}
+
+.bookmark-search button {
+  font: inherit;
+  font-weight: 500;
+  padding: 8px 14px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-h);
+  cursor: pointer;
+}
+
+.bookmark-search button:hover {
+  opacity: 0.8;
+}
+
 .bookmark-form {
   display: flex;
   flex-direction: column;

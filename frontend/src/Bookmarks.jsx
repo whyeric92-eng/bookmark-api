@@ -18,9 +18,14 @@ function Bookmarks() {
     const [editNotes, setEditNotes] = useState('')
     const [editError, setEditError] = useState('')
 
-    async function get_bookmarks() {
+    const [q, setQ] = useState('')
+
+    async function get_bookmarks(searchQuery) {
         try {
-            const res = await apiFetch('/bookmarks', {
+            const url = searchQuery
+                ? '/bookmarks?q=' + encodeURIComponent(searchQuery)
+                : '/bookmarks'
+            const res = await apiFetch(url, {
                 method: 'GET',
             })
             const data = await res.json()
@@ -41,6 +46,12 @@ function Bookmarks() {
         get_bookmarks()
     }, [])
 
+    function handleSearch(e) {
+        e.preventDefault()
+        setLoading(true)
+        get_bookmarks(q)
+    }
+
     async function handleSubmit(e) {
         e.preventDefault()
         setFormError('')
@@ -58,7 +69,7 @@ function Bookmarks() {
                 setTitle('')
                 setUrl('')
                 setNotes('')
-                get_bookmarks()
+                get_bookmarks(q)
             } else {
                 setSuccess(false)
                 if (Array.isArray(data.detail)) {
@@ -79,7 +90,7 @@ function Bookmarks() {
             })
 
             if (res.ok) {
-                get_bookmarks()
+                get_bookmarks(q)
             } else {
                 setFormError('Failed to delete bookmark')
             }
@@ -113,7 +124,7 @@ function Bookmarks() {
 
             if (res.ok) {
                 setEditingId(null)
-                get_bookmarks()
+                get_bookmarks(q)
             } else {
                 if (Array.isArray(data.detail)) {
                     setEditError(data.detail.map((item) => item.msg).join(', '))
@@ -137,6 +148,16 @@ function Bookmarks() {
     return (
         <div className="bookmarks-page">
             <h1>Bookmarks</h1>
+
+            <form className="bookmark-search" onSubmit={handleSearch}>
+                <input
+                    type="text"
+                    placeholder="Search title, url, or notes"
+                    value={q}
+                    onChange={(e) => setQ(e.target.value)}
+                />
+                <button type="submit">Search</button>
+            </form>
 
             <form className="bookmark-form" onSubmit={handleSubmit}>
                 <input
