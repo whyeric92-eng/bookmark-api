@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { apiFetch } from './api'
 import './App.css'
 
 function Login() {
@@ -13,7 +14,7 @@ function Login() {
     setError('')
     setSuccess(false)
     try {
-      const res = await fetch ('http://127.0.0.1:8001/users/login', {
+      const res = await apiFetch('/users/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password })
