@@ -92,22 +92,83 @@
   text-decoration: none;
 }
 
-.bookmark-delete {
+.bookmark-actions {
+  display: flex;
+  gap: 6px;
   flex-shrink: 0;
+}
+
+.bookmark-edit,
+.bookmark-delete {
   font: inherit;
   font-size: 12px;
   padding: 4px 10px;
   border-radius: 6px;
   border: 1px solid var(--border);
   background: transparent;
-  color: #e5484d;
   cursor: pointer;
+}
+
+.bookmark-edit {
+  color: var(--accent);
+}
+
+.bookmark-edit:hover {
+  background: var(--accent);
+  color: white;
+  border-color: var(--accent);
+}
+
+.bookmark-delete {
+  color: #e5484d;
 }
 
 .bookmark-delete:hover {
   background: #e5484d;
   color: white;
   border-color: #e5484d;
+}
+
+.bookmark-edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.bookmark-edit-form input {
+  font: inherit;
+  padding: 6px 8px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text-h);
+}
+
+.bookmark-edit-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.bookmark-edit-actions button {
+  font: inherit;
+  font-size: 13px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: transparent;
+  cursor: pointer;
+}
+
+.bookmark-edit-actions button[type="submit"] {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: white;
+}
+
+.bookmark-edit-form .form-error {
+  margin: 0;
+  font-size: 14px;
+  color: #e5484d;
 }
 
 .bookmark-title:hover {

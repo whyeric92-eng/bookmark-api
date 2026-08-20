@@ -12,6 +12,12 @@ function Bookmarks() {
     const [success, setSuccess] = useState(false)
     const [formError, setFormError] = useState('')
 
+    const [editingId, setEditingId] = useState(null)
+    const [editTitle, setEditTitle] = useState('')
+    const [editUrl, setEditUrl] = useState('')
+    const [editNotes, setEditNotes] = useState('')
+    const [editError, setEditError] = useState('')
+
     async function get_bookmarks() {
         try {
             const res = await apiFetch('/bookmarks', {
@@ -82,6 +88,44 @@ function Bookmarks() {
         }
     }
 
+    function handleEditClick(bookmark) {
+        setEditingId(bookmark.bookmark_id)
+        setEditTitle(bookmark.title)
+        setEditUrl(bookmark.url)
+        setEditNotes(bookmark.notes || '')
+        setEditError('')
+    }
+
+    function handleCancelEdit() {
+        setEditingId(null)
+    }
+
+    async function handleEditSubmit(e, bookmarkId) {
+        e.preventDefault()
+        setEditError('')
+        try {
+            const res = await apiFetch('/bookmarks/' + bookmarkId, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ title: editTitle, url: editUrl, notes: editNotes })
+            })
+            const data = await res.json()
+
+            if (res.ok) {
+                setEditingId(null)
+                get_bookmarks()
+            } else {
+                if (Array.isArray(data.detail)) {
+                    setEditError(data.detail.map((item) => item.msg).join(', '))
+                } else {
+                    setEditError(data.detail)
+                }
+            }
+        } catch (err) {
+            setEditError('Cannot connect to the server')
+        }
+    }
+
     if (loading) {
         return <p className="bookmarks-status">Loading...</p>
     }
@@ -125,26 +169,65 @@ function Bookmarks() {
                 <ul className="bookmarks-list">
                     {bookmarks.map((bookmark) => (
                         <li key={bookmark.bookmark_id} className="bookmark-card">
-                            <div className="bookmark-card-header">
-                                <a href={bookmark.url} target="_blank" rel="noreferrer" className="bookmark-title">
-                                    {bookmark.title}
-                                </a>
-                                <button
-                                    type="button"
-                                    className="bookmark-delete"
-                                    onClick={() => handleDelete(bookmark.bookmark_id)}
+                            {editingId === bookmark.bookmark_id ? (
+                                <form
+                                    className="bookmark-edit-form"
+                                    onSubmit={(e) => handleEditSubmit(e, bookmark.bookmark_id)}
                                 >
-                                    Delete
-                                </button>
-                            </div>
-                            <p className="bookmark-url">{bookmark.url}</p>
-                            {bookmark.notes && <p className="bookmark-notes">{bookmark.notes}</p>}
-                            {bookmark.tags && bookmark.tags.length > 0 && (
-                                <div className="bookmark-tags">
-                                    {bookmark.tags.map((tag) => (
-                                        <span key={tag.tag_id} className="bookmark-tag">{tag.tag}</span>
-                                    ))}
-                                </div>
+                                    <input
+                                        type="text"
+                                        value={editTitle}
+                                        onChange={(e) => setEditTitle(e.target.value)}
+                                    />
+                                    <input
+                                        type="url"
+                                        value={editUrl}
+                                        onChange={(e) => setEditUrl(e.target.value)}
+                                    />
+                                    <input
+                                        type="text"
+                                        value={editNotes}
+                                        onChange={(e) => setEditNotes(e.target.value)}
+                                    />
+                                    <div className="bookmark-edit-actions">
+                                        <button type="submit">Save</button>
+                                        <button type="button" onClick={handleCancelEdit}>Cancel</button>
+                                    </div>
+                                    {editError && <p className="form-error">{editError}</p>}
+                                </form>
+                            ) : (
+                                <>
+                                    <div className="bookmark-card-header">
+                                        <a href={bookmark.url} target="_blank" rel="noreferrer" className="bookmark-title">
+                                            {bookmark.title}
+                                        </a>
+                                        <div className="bookmark-actions">
+                                            <button
+                                                type="button"
+                                                className="bookmark-edit"
+                                                onClick={() => handleEditClick(bookmark)}
+                                            >
+                                                Edit
+                                            </button>
+                                            <button
+                                                type="button"
+                                                className="bookmark-delete"
+                                                onClick={() => handleDelete(bookmark.bookmark_id)}
+                                            >
+                                                Delete
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <p className="bookmark-url">{bookmark.url}</p>
+                                    {bookmark.notes && <p className="bookmark-notes">{bookmark.notes}</p>}
+                                    {bookmark.tags && bookmark.tags.length > 0 && (
+                                        <div className="bookmark-tags">
+                                            {bookmark.tags.map((tag) => (
+                                                <span key={tag.tag_id} className="bookmark-tag">{tag.tag}</span>
+                                            ))}
+                                        </div>
+                                    )}
+                                </>
                             )}
                         </li>
                     ))}
