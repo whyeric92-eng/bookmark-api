@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react"
+import { Link } from 'react-router-dom'
 import { apiFetch } from './api'
 import './Bookmarks.css'
 
@@ -19,6 +20,24 @@ function Bookmarks() {
     const [editError, setEditError] = useState('')
 
     const [q, setQ] = useState('')
+
+    const [allTags, setAllTags] = useState([])
+
+    async function get_tags() {
+        try {
+            const res = await apiFetch('/tags', { method: 'GET' })
+            const data = await res.json()
+            if (res.ok) {
+                setAllTags(data)
+            }
+        } catch (err) {
+            // tag dropdown just stays empty if this fails, not worth blocking the page over
+        }
+    }
+
+    useEffect(() => {
+        get_tags()
+    }, [])
 
     async function get_bookmarks(searchQuery) {
         try {
@@ -137,6 +156,37 @@ function Bookmarks() {
         }
     }
 
+    async function handleAttachTag(bookmarkId, tagId) {
+        try {
+            const res = await apiFetch('/bookmarks/' + bookmarkId + '/tags/' + tagId, {
+                method: 'POST',
+            })
+            if (res.ok) {
+                get_bookmarks(q)
+            } else {
+                const data = await res.json()
+                setFormError(Array.isArray(data.detail) ? data.detail.map((item) => item.msg).join(', ') : data.detail)
+            }
+        } catch (err) {
+            setFormError('Cannot connect to the server')
+        }
+    }
+
+    async function handleDetachTag(bookmarkId, tagId) {
+        try {
+            const res = await apiFetch('/bookmarks/' + bookmarkId + '/tags/' + tagId, {
+                method: 'DELETE',
+            })
+            if (res.ok) {
+                get_bookmarks(q)
+            } else {
+                setFormError('Failed to remove tag')
+            }
+        } catch (err) {
+            setFormError('Cannot connect to the server')
+        }
+    }
+
     if (loading) {
         return <p className="bookmarks-status">Loading...</p>
     }
@@ -147,7 +197,10 @@ function Bookmarks() {
 
     return (
         <div className="bookmarks-page">
-            <h1>Bookmarks</h1>
+            <div className="bookmarks-page-header">
+                <h1>Bookmarks</h1>
+                <Link to="/tags">Manage tags</Link>
+            </div>
 
             <form className="bookmark-search" onSubmit={handleSearch}>
                 <input
@@ -241,13 +294,40 @@ function Bookmarks() {
                                     </div>
                                     <p className="bookmark-url">{bookmark.url}</p>
                                     {bookmark.notes && <p className="bookmark-notes">{bookmark.notes}</p>}
-                                    {bookmark.tags && bookmark.tags.length > 0 && (
-                                        <div className="bookmark-tags">
-                                            {bookmark.tags.map((tag) => (
-                                                <span key={tag.tag_id} className="bookmark-tag">{tag.tag}</span>
-                                            ))}
-                                        </div>
-                                    )}
+
+                                    <div className="bookmark-tags">
+                                        {bookmark.tags && bookmark.tags.map((tag) => (
+                                            <span key={tag.tag_id} className="bookmark-tag">
+                                                {tag.tag}
+                                                <button
+                                                    type="button"
+                                                    className="bookmark-tag-remove"
+                                                    onClick={() => handleDetachTag(bookmark.bookmark_id, tag.tag_id)}
+                                                >
+                                                    ×
+                                                </button>
+                                            </span>
+                                        ))}
+
+                                        {allTags.filter((t) => !bookmark.tags?.some((bt) => bt.tag_id === t.tag_id)).length > 0 && (
+                                            <select
+                                                className="bookmark-tag-select"
+                                                value=""
+                                                onChange={(e) => {
+                                                    if (e.target.value) {
+                                                        handleAttachTag(bookmark.bookmark_id, e.target.value)
+                                                    }
+                                                }}
+                                            >
+                                                <option value="">+ Add tag</option>
+                                                {allTags
+                                                    .filter((t) => !bookmark.tags?.some((bt) => bt.tag_id === t.tag_id))
+                                                    .map((t) => (
+                                                        <option key={t.tag_id} value={t.tag_id}>{t.tag}</option>
+                                                    ))}
+                                            </select>
+                                        )}
+                                    </div>
                                 </>
                             )}
                         </li>
