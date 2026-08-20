@@ -2,6 +2,7 @@ import Register from './Register'
 import Login from './Login'
 import Bookmarks from './Bookmarks'
 import Tags from './Tags'
+import Profile from './Profile'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import ProtectedRoute from './ProtectedRoute'
 
@@ -19,6 +20,10 @@ function App() {
         <Route path="/tags" element={
           <ProtectedRoute>
             <Tags />
+          </ProtectedRoute>} />
+        <Route path="/profile" element={
+          <ProtectedRoute>
+            <Profile />
           </ProtectedRoute>} />
       </Routes>
     </BrowserRouter>

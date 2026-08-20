@@ -1,0 +1,95 @@
+.profile-page {
+  flex-grow: 1;
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.profile-status {
+  text-align: center;
+  color: var(--text);
+  margin-top: 48px;
+}
+
+.profile-view {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.profile-view p {
+  margin: 0;
+  font-size: 15px;
+  color: var(--text-h);
+}
+
+.profile-label {
+  display: inline-block;
+  width: 90px;
+  font-size: 13px;
+  color: var(--text);
+}
+
+.profile-view button,
+.profile-actions button {
+  font: inherit;
+  font-weight: 500;
+  padding: 8px 14px;
+  border-radius: 6px;
+  border: none;
+  color: white;
+  background: var(--accent);
+  cursor: pointer;
+}
+
+.profile-actions button[type="button"] {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-h);
+}
+
+.profile-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.profile-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 14px;
+  color: var(--text);
+}
+
+.profile-form input {
+  font: inherit;
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text-h);
+}
+
+.profile-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.profile-form .form-error,
+.profile-view .form-error,
+.profile-view .form-success {
+  margin: 0;
+  font-size: 14px;
+}
+
+.profile-form .form-error,
+.profile-view .form-error {
+  color: #e5484d;
+}
+
+.profile-view .form-success {
+  color: #30a46c;
+}

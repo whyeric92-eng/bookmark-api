@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react"
-import { Link } from 'react-router-dom'
 import { apiFetch } from './api'
+import NavBar from './NavBar'
 import './Bookmarks.css'
 
 function Bookmarks() {
@@ -188,19 +188,28 @@ function Bookmarks() {
     }
 
     if (loading) {
-        return <p className="bookmarks-status">Loading...</p>
+        return (
+            <>
+                <NavBar />
+                <p className="bookmarks-status">Loading...</p>
+            </>
+        )
     }
 
     if (error) {
-        return <p className="bookmarks-status form-error">{error}</p>
+        return (
+            <>
+                <NavBar />
+                <p className="bookmarks-status form-error">{error}</p>
+            </>
+        )
     }
 
     return (
-        <div className="bookmarks-page">
-            <div className="bookmarks-page-header">
+        <>
+            <NavBar />
+            <div className="bookmarks-page">
                 <h1>Bookmarks</h1>
-                <Link to="/tags">Manage tags</Link>
-            </div>
 
             <form className="bookmark-search" onSubmit={handleSearch}>
                 <input
@@ -334,7 +343,8 @@ function Bookmarks() {
                     ))}
                 </ul>
             )}
-        </div>
+            </div>
+        </>
     )
 }
 

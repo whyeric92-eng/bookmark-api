@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
 import { apiFetch } from './api'
+import NavBar from './NavBar'
 import './Tags.css'
 
 function Tags() {
@@ -121,19 +121,28 @@ function Tags() {
     }
 
     if (loading) {
-        return <p className="tags-status">Loading...</p>
+        return (
+            <>
+                <NavBar />
+                <p className="tags-status">Loading...</p>
+            </>
+        )
     }
 
     if (error) {
-        return <p className="tags-status form-error">{error}</p>
+        return (
+            <>
+                <NavBar />
+                <p className="tags-status form-error">{error}</p>
+            </>
+        )
     }
 
     return (
-        <div className="tags-page">
-            <div className="tags-page-header">
-                <h1>Tags</h1>
-                <Link to="/">Back to bookmarks</Link>
-            </div>
+        <>
+            <NavBar />
+            <div className="tags-page">
+            <h1>Tags</h1>
 
             <form className="tag-form" onSubmit={handleSubmit}>
                 <input
@@ -193,7 +202,8 @@ function Tags() {
                     ))}
                 </ul>
             )}
-        </div>
+            </div>
+        </>
     )
 }
 
