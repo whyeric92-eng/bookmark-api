@@ -66,6 +66,22 @@ function Bookmarks() {
         }
     }
 
+    async function handleDelete(bookmarkId) {
+        try {
+            const res = await apiFetch('/bookmarks/' + bookmarkId, {
+                method: 'DELETE',
+            })
+
+            if (res.ok) {
+                get_bookmarks()
+            } else {
+                setFormError('Failed to delete bookmark')
+            }
+        } catch (err) {
+            setFormError('Cannot connect to the server')
+        }
+    }
+
     if (loading) {
         return <p className="bookmarks-status">Loading...</p>
     }
@@ -109,9 +125,18 @@ function Bookmarks() {
                 <ul className="bookmarks-list">
                     {bookmarks.map((bookmark) => (
                         <li key={bookmark.bookmark_id} className="bookmark-card">
-                            <a href={bookmark.url} target="_blank" rel="noreferrer" className="bookmark-title">
-                                {bookmark.title}
-                            </a>
+                            <div className="bookmark-card-header">
+                                <a href={bookmark.url} target="_blank" rel="noreferrer" className="bookmark-title">
+                                    {bookmark.title}
+                                </a>
+                                <button
+                                    type="button"
+                                    className="bookmark-delete"
+                                    onClick={() => handleDelete(bookmark.bookmark_id)}
+                                >
+                                    Delete
+                                </button>
+                            </div>
                             <p className="bookmark-url">{bookmark.url}</p>
                             {bookmark.notes && <p className="bookmark-notes">{bookmark.notes}</p>}
                             {bookmark.tags && bookmark.tags.length > 0 && (

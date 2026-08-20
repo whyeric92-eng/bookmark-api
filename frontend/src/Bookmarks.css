@@ -79,10 +79,35 @@
   padding: 14px 16px;
 }
 
+.bookmark-card-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
 .bookmark-title {
   font-weight: 500;
   color: var(--accent);
   text-decoration: none;
+}
+
+.bookmark-delete {
+  flex-shrink: 0;
+  font: inherit;
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: #e5484d;
+  cursor: pointer;
+}
+
+.bookmark-delete:hover {
+  background: #e5484d;
+  color: white;
+  border-color: #e5484d;
 }
 
 .bookmark-title:hover {
