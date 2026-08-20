@@ -34,7 +34,7 @@ def create_bookmark(payload: BookmarkCreate, session: SessionDep, current_user: 
     session.refresh(bookmark)
     return bookmark
 
-@router.get("", response_model=list[Bookmark])
+@router.get("", response_model=list[BookmarkPublicWithTags])
 def get_bookmarks(current_user: CurrentUserDep, session: SessionDep, tag :str | None = None, q: str | None = None):
     statement = select(Bookmark).where(Bookmark.user_id == current_user.user_id)
     if tag:
