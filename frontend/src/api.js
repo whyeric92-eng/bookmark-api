@@ -1,6 +1,6 @@
 export const BASE_URL = 'http://127.0.0.1:8001'
 
-export function apiFetch(path, options = {}) {
+export async function apiFetch(path, options = {}) {
   const token = localStorage.getItem('token')
 
   const headers = {
@@ -8,7 +8,14 @@ export function apiFetch(path, options = {}) {
     ...(token ? { Authorization: `Bearer ${token}` } : {}),
   }
 
-  return fetch(`${BASE_URL}${path}`, { ...options, headers })
+  const res = await fetch(`${BASE_URL}${path}`, { ...options, headers })
+
+  if (res.status === 401) {
+    localStorage.removeItem('token')
+    window.location.href = '/login'
+  } 
+
+  return res
 }
 
 export function parseErrorDetail(data) {
