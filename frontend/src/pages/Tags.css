@@ -4,6 +4,21 @@
   max-width: 480px;
   margin: 0 auto;
   padding: 24px;
+  box-sizing: border-box;
+  text-align: left;
+
+  h1 {
+    text-align: center;
+  }
+
+  @media (min-width: 1440px) {
+    max-width: 560px;
+  }
+
+  @media (max-width: 640px) {
+    max-width: 100%;
+    padding: 16px;
+  }
 }
 
 .tags-status {
@@ -23,22 +38,32 @@
 .tag-edit-form input {
   flex-grow: 1;
   font: inherit;
-  padding: 8px 10px;
-  border-radius: 6px;
+  padding: 9px 12px;
+  border-radius: 8px;
   border: 1px solid var(--border);
   background: var(--bg);
   color: var(--text-h);
+  box-shadow: var(--shadow-sm);
+  box-sizing: border-box;
 }
 
 .tag-form button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   font: inherit;
-  font-weight: 500;
-  padding: 8px 14px;
-  border-radius: 6px;
+  font-weight: 600;
+  padding: 9px 16px;
+  border-radius: 8px;
   border: none;
   color: white;
   background: var(--accent);
   cursor: pointer;
+  white-space: nowrap;
+}
+
+.tag-form button:hover {
+  background: var(--accent-hover);
 }
 
 .tag-form .form-error,
@@ -60,44 +85,61 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  background: var(--bg);
   border: 1px solid var(--border);
-  border-radius: 8px;
+  border-radius: 12px;
+  box-shadow: var(--shadow-sm);
   padding: 10px 14px;
 }
 
+.tag-name-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.tag-icon {
+  flex-shrink: 0;
+  width: 26px;
+  height: 26px;
+  border-radius: 7px;
+  background: var(--accent-bg);
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .tag-name {
-  font-weight: 500;
+  font-size: 15px;
+  font-weight: 600;
   color: var(--text-h);
 }
 
 .tag-actions {
   display: flex;
-  gap: 6px;
+  gap: 4px;
 }
 
 .tag-edit,
 .tag-delete {
-  font: inherit;
-  font-size: 12px;
-  padding: 4px 10px;
-  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border-radius: 8px;
   border: 1px solid var(--border);
   background: transparent;
+  color: var(--text);
   cursor: pointer;
-}
-
-.tag-edit {
-  color: var(--accent);
 }
 
 .tag-edit:hover {
   background: var(--accent);
   color: white;
   border-color: var(--accent);
-}
-
-.tag-delete {
-  color: #e5484d;
 }
 
 .tag-delete:hover {

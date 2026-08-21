@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { apiFetch, parseErrorDetail } from '../api'
 import NavBar from '../components/NavBar'
+import ConfirmModal from '../components/ConfirmModal'
 import './Tags.css'
 
 function Tags() {
@@ -15,6 +16,8 @@ function Tags() {
     const [editingId, setEditingId] = useState(null)
     const [editTag, setEditTag] = useState('')
     const [editError, setEditError] = useState('')
+
+    const [deleteTarget, setDeleteTarget] = useState(null)
 
     async function get_tags() {
         try {
@@ -38,6 +41,15 @@ function Tags() {
     useEffect(() => {
         get_tags()
     }, [])
+
+    useEffect(() => {
+        if (!success && !formError) return
+        const timer = setTimeout(() => {
+            setSuccess(false)
+            setFormError('')
+        }, 3000)
+        return () => clearTimeout(timer)
+    }, [success, formError])
 
     async function handleSubmit(e) {
         e.preventDefault()
@@ -64,7 +76,13 @@ function Tags() {
         }
     }
 
-    async function handleDelete(tagId) {
+    function handleDeleteClick(t) {
+        setDeleteTarget(t)
+    }
+
+    async function handleDeleteConfirm() {
+        const tagId = deleteTarget.tag_id
+        setDeleteTarget(null)
         try {
             const res = await apiFetch('/tags/' + tagId, {
                 method: 'DELETE',
@@ -143,7 +161,13 @@ function Tags() {
                     value={tag}
                     onChange={(e) => setTag(e.target.value)}
                 />
-                <button type="submit">Add tag</button>
+                <button type="submit">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round">
+                        <line x1="12" y1="5" x2="12" y2="19" />
+                        <line x1="5" y1="12" x2="19" y2="12" />
+                    </svg>
+                    Add tag
+                </button>
 
                 {formError && <p className="form-error">{formError}</p>}
                 {success && <p className="form-success">Added.</p>}
@@ -171,21 +195,37 @@ function Tags() {
                                 </form>
                             ) : (
                                 <>
-                                    <span className="tag-name">{t.tag}</span>
+                                    <div className="tag-name-group">
+                                        <div className="tag-icon">
+                                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                                <path d="M12 2H3v9l9.3 9.3a2 2 0 0 0 2.8 0l6.2-6.2a2 2 0 0 0 0-2.8L12 2Z" />
+                                                <circle cx="7.5" cy="7.5" r="1.4" fill="currentColor" stroke="none" />
+                                            </svg>
+                                        </div>
+                                        <span className="tag-name">{t.tag}</span>
+                                    </div>
                                     <div className="tag-actions">
                                         <button
                                             type="button"
                                             className="tag-edit"
                                             onClick={() => handleEditClick(t)}
+                                            aria-label="Edit tag"
                                         >
-                                            Edit
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                                <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
+                                            </svg>
                                         </button>
                                         <button
                                             type="button"
                                             className="tag-delete"
-                                            onClick={() => handleDelete(t.tag_id)}
+                                            onClick={() => handleDeleteClick(t)}
+                                            aria-label="Delete tag"
                                         >
-                                            Delete
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                                <path d="M3 6h18" />
+                                                <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                                                <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+                                            </svg>
                                         </button>
                                     </div>
                                 </>
@@ -195,6 +235,15 @@ function Tags() {
                 </ul>
             )}
             </div>
+            <ConfirmModal
+                open={!!deleteTarget}
+                title="Delete tag?"
+                message={deleteTarget ? `"${deleteTarget.tag}" will be removed from any bookmarks it's on.` : ''}
+                confirmLabel="Delete"
+                danger
+                onConfirm={handleDeleteConfirm}
+                onCancel={() => setDeleteTarget(null)}
+            />
         </>
     )
 }

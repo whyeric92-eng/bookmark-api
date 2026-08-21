@@ -37,6 +37,15 @@ function Profile() {
         get_profile()
     }, [])
 
+    useEffect(() => {
+        if (!success && !formError) return
+        const timer = setTimeout(() => {
+            setSuccess(false)
+            setFormError('')
+        }, 3000)
+        return () => clearTimeout(timer)
+    }, [success, formError])
+
     function handleEditClick() {
         setEditUsername(username)
         setEditEmail(email)
@@ -110,9 +119,21 @@ function Profile() {
                     </form>
                 ) : (
                     <div className="profile-view">
+                        <div className="profile-header">
+                            <div className="profile-avatar">{username ? username[0].toUpperCase() : '?'}</div>
+                            <div>
+                                <div className="profile-name">{username}</div>
+                                <div className="profile-email">{email}</div>
+                            </div>
+                        </div>
                         <p><span className="profile-label">Username</span>{username}</p>
                         <p><span className="profile-label">Email</span>{email}</p>
-                        <button type="button" onClick={handleEditClick}>Edit</button>
+                        <button type="button" onClick={handleEditClick}>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
+                            </svg>
+                            Edit
+                        </button>
                         {success && <p className="form-success">Updated.</p>}
                     </div>
                 )}
