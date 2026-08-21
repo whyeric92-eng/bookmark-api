@@ -4,6 +4,19 @@
   align-items: center;
   justify-content: center;
   padding: 24px;
+  background: radial-gradient(600px circle at 50% 0%, var(--accent-bg), transparent 60%);
+}
+
+.auth-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  margin: 0 auto 16px;
+  border-radius: 12px;
+  background: var(--accent);
+  color: white;
 }
 
 .auth-form {
@@ -13,10 +26,25 @@
   flex-direction: column;
   gap: 16px;
   text-align: left;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  padding: 36px;
+  box-sizing: border-box;
 
   h1 {
+    font-size: 26px;
+    letter-spacing: -0.4px;
     text-align: center;
-    margin-bottom: 8px;
+    margin: 0;
+  }
+
+  .auth-subtitle {
+    margin: 4px 0 4px;
+    font-size: 14px;
+    color: var(--text);
+    text-align: center;
   }
 
   label {
@@ -30,9 +58,9 @@
   input {
     font: inherit;
     padding: 10px 12px;
-    border-radius: 6px;
+    border-radius: 8px;
     border: 1px solid var(--border);
-    background: var(--bg);
+    background: var(--surface);
     color: var(--text-h);
 
     &:focus-visible {
@@ -44,16 +72,16 @@
   button {
     margin-top: 8px;
     font: inherit;
-    font-weight: 500;
+    font-weight: 600;
     padding: 10px 12px;
-    border-radius: 6px;
+    border-radius: 8px;
     border: none;
     color: white;
     background: var(--accent);
     cursor: pointer;
 
     &:hover {
-      opacity: 0.9;
+      background: var(--accent-hover);
     }
   }
 

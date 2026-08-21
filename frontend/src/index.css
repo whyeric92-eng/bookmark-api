@@ -2,12 +2,15 @@
   --text: #6b6375;
   --text-h: #08060d;
   --bg: #fff;
+  --surface: #fff;
   --border: #e5e4e7;
   --code-bg: #f4f3ec;
   --accent: #aa3bff;
+  --accent-hover: #8f22e0;
   --accent-bg: rgba(170, 59, 255, 0.1);
   --accent-border: rgba(170, 59, 255, 0.5);
   --social-bg: rgba(244, 243, 236, 0.5);
+  --shadow-sm: 0 1px 2px rgba(8, 6, 13, 0.05), 0 1px 1px rgba(8, 6, 13, 0.03);
   --shadow:
     rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
 
@@ -35,12 +38,15 @@
     --text: #9ca3af;
     --text-h: #f3f4f6;
     --bg: #16171d;
+    --surface: #1b1c23;
     --border: #2e303a;
     --code-bg: #1f2028;
     --accent: #c084fc;
+    --accent-hover: #d4a4fd;
     --accent-bg: rgba(192, 132, 252, 0.15);
     --accent-border: rgba(192, 132, 252, 0.5);
     --social-bg: rgba(47, 48, 58, 0.5);
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3), 0 1px 1px rgba(0, 0, 0, 0.2);
     --shadow:
       rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
   }
@@ -60,10 +66,19 @@ body {
   margin: 0 auto;
   text-align: center;
   border-inline: 1px solid var(--border);
+  background: var(--surface);
   min-height: 100svh;
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
+
+  @media (min-width: 1440px) {
+    width: 1320px;
+  }
+
+  @media (max-width: 640px) {
+    border-inline: none;
+  }
 }
 
 h1,
@@ -113,9 +128,11 @@ code {
 .form-error {
   font-size: 14px;
   color: #e5484d;
+  text-align: left;
 }
 
 .form-success {
   font-size: 14px;
   color: #30a46c;
+  text-align: left;
 }

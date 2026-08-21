@@ -4,6 +4,21 @@
   max-width: 400px;
   margin: 0 auto;
   padding: 24px;
+  box-sizing: border-box;
+  text-align: left;
+
+  h1 {
+    text-align: center;
+  }
+
+  @media (min-width: 1440px) {
+    max-width: 460px;
+  }
+
+  @media (max-width: 640px) {
+    max-width: 100%;
+    padding: 16px;
+  }
 }
 
 .profile-status {
@@ -15,8 +30,51 @@
 .profile-view {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
   align-items: flex-start;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  box-shadow: var(--shadow-sm);
+  padding: 24px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.profile-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding-bottom: 14px;
+  margin-bottom: 4px;
+  border-bottom: 1px solid var(--border);
+  width: 100%;
+}
+
+.profile-avatar {
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.profile-name {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-h);
+}
+
+.profile-email {
+  font-size: 13px;
+  color: var(--text);
+  margin-top: 2px;
 }
 
 .profile-view p {
@@ -34,14 +92,22 @@
 
 .profile-view button,
 .profile-actions button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   font: inherit;
-  font-weight: 500;
-  padding: 8px 14px;
-  border-radius: 6px;
+  font-weight: 600;
+  padding: 8px 16px;
+  border-radius: 8px;
   border: none;
   color: white;
   background: var(--accent);
   cursor: pointer;
+}
+
+.profile-view button:hover,
+.profile-actions button[type="submit"]:hover {
+  background: var(--accent-hover);
 }
 
 .profile-actions button[type="button"] {
@@ -50,10 +116,20 @@
   color: var(--text-h);
 }
 
+.profile-actions button[type="button"]:hover {
+  background: var(--surface);
+}
+
 .profile-form {
   display: flex;
   flex-direction: column;
   gap: 14px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  box-shadow: var(--shadow-sm);
+  padding: 24px;
+  box-sizing: border-box;
 }
 
 .profile-form label {
@@ -67,14 +143,14 @@
 .profile-form input {
   font: inherit;
   padding: 8px 10px;
-  border-radius: 6px;
+  border-radius: 8px;
   border: 1px solid var(--border);
-  background: var(--bg);
+  background: var(--surface);
   color: var(--text-h);
+  box-sizing: border-box;
 }
 
 .profile-actions {
   display: flex;
   gap: 8px;
 }
-

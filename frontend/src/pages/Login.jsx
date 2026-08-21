@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { apiFetch, parseErrorDetail } from '../api'
 import './Auth.css'
@@ -10,6 +10,14 @@ function Login() {
   const [success, setSuccess] = useState(false)
   const navigate = useNavigate()
 
+  useEffect(() => {
+    if (!error && !success) return
+    const timer = setTimeout(() => {
+      setError('')
+      setSuccess(false)
+    }, 3000)
+    return () => clearTimeout(timer)
+  }, [error, success])
 
   async function handleSubmit(e) {
     e.preventDefault()
@@ -40,7 +48,13 @@ function Login() {
   return (
     <div className="auth-page">
       <form className="auth-form" onSubmit={handleSubmit}>
-        <h1>Login</h1>
+        <div className="auth-logo">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M18 21 12 16.5 6 21V4.6C6 3.7 6.7 3 7.6 3h8.8c.9 0 1.6.7 1.6 1.6V21Z" />
+          </svg>
+        </div>
+        <h1>Welcome back</h1>
+        <p className="auth-subtitle">Log in to your bookmarks</p>
 
         <label>
           Email

@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react"
 import { apiFetch, parseErrorDetail } from '../api'
 import NavBar from '../components/NavBar'
+import ConfirmModal from '../components/ConfirmModal'
 import './Bookmarks.css'
 
 function Bookmarks() {
@@ -18,6 +19,8 @@ function Bookmarks() {
     const [editUrl, setEditUrl] = useState('')
     const [editNotes, setEditNotes] = useState('')
     const [editError, setEditError] = useState('')
+
+    const [deleteTarget, setDeleteTarget] = useState(null)
 
     const [q, setQ] = useState('')
 
@@ -65,6 +68,15 @@ function Bookmarks() {
         get_bookmarks()
     }, [])
 
+    useEffect(() => {
+        if (!success && !formError) return
+        const timer = setTimeout(() => {
+            setSuccess(false)
+            setFormError('')
+        }, 3000)
+        return () => clearTimeout(timer)
+    }, [success, formError])
+
     function handleSearch(e) {
         e.preventDefault()
         setLoading(true)
@@ -98,7 +110,13 @@ function Bookmarks() {
         }
     }
 
-    async function handleDelete(bookmarkId) {
+    function handleDeleteClick(bookmark) {
+        setDeleteTarget(bookmark)
+    }
+
+    async function handleDeleteConfirm() {
+        const bookmarkId = deleteTarget.bookmark_id
+        setDeleteTarget(null)
         try {
             const res = await apiFetch('/bookmarks/' + bookmarkId, {
                 method: 'DELETE',
@@ -204,35 +222,50 @@ function Bookmarks() {
                 <h1>Bookmarks</h1>
 
             <form className="bookmark-search" onSubmit={handleSearch}>
-                <input
-                    type="text"
-                    placeholder="Search title, url, or notes"
-                    value={q}
-                    onChange={(e) => setQ(e.target.value)}
-                />
+                <div className="bookmark-search-input">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <circle cx="11" cy="11" r="7" />
+                        <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                    </svg>
+                    <input
+                        type="text"
+                        placeholder="Search title, url, or notes"
+                        value={q}
+                        onChange={(e) => setQ(e.target.value)}
+                    />
+                </div>
                 <button type="submit">Search</button>
             </form>
 
             <form className="bookmark-form" onSubmit={handleSubmit}>
-                <input
-                    type="text"
-                    placeholder="Title"
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                />
-                <input
-                    type="url"
-                    placeholder="https://example.com"
-                    value={url}
-                    onChange={(e) => setUrl(e.target.value)}
-                />
+                <div className="bookmark-form-label">Add a bookmark</div>
+                <div className="bookmark-form-row">
+                    <input
+                        type="text"
+                        placeholder="Title"
+                        value={title}
+                        onChange={(e) => setTitle(e.target.value)}
+                    />
+                    <input
+                        type="url"
+                        placeholder="https://example.com"
+                        value={url}
+                        onChange={(e) => setUrl(e.target.value)}
+                    />
+                </div>
                 <input
                     type="text"
                     placeholder="Notes (optional)"
                     value={notes}
                     onChange={(e) => setNotes(e.target.value)}
                 />
-                <button type="submit">Add bookmark</button>
+                <button type="submit">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round">
+                        <line x1="12" y1="5" x2="12" y2="19" />
+                        <line x1="5" y1="12" x2="19" y2="12" />
+                    </svg>
+                    Add bookmark
+                </button>
 
                 {formError && <p className="form-error">{formError}</p>}
                 {success && <p className="form-success">Added.</p>}
@@ -273,27 +306,46 @@ function Bookmarks() {
                             ) : (
                                 <>
                                     <div className="bookmark-card-header">
-                                        <a href={bookmark.url} target="_blank" rel="noreferrer" className="bookmark-title">
-                                            {bookmark.title}
-                                        </a>
+                                        <div className="bookmark-card-heading">
+                                            <div className="bookmark-favicon">
+                                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                                    <circle cx="12" cy="12" r="9" />
+                                                    <line x1="3" y1="12" x2="21" y2="12" />
+                                                    <path d="M12 3c2.4 2.4 3.6 5.8 3.6 9s-1.2 6.6-3.6 9c-2.4-2.4-3.6-5.8-3.6-9S9.6 5.4 12 3Z" />
+                                                </svg>
+                                            </div>
+                                            <div className="bookmark-card-text">
+                                                <span className="bookmark-title">{bookmark.title}</span>
+                                                <a href={bookmark.url} target="_blank" rel="noreferrer" className="bookmark-url">
+                                                    {bookmark.url}
+                                                </a>
+                                            </div>
+                                        </div>
                                         <div className="bookmark-actions">
                                             <button
                                                 type="button"
                                                 className="bookmark-edit"
                                                 onClick={() => handleEditClick(bookmark)}
+                                                aria-label="Edit bookmark"
                                             >
-                                                Edit
+                                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                                    <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
+                                                </svg>
                                             </button>
                                             <button
                                                 type="button"
                                                 className="bookmark-delete"
-                                                onClick={() => handleDelete(bookmark.bookmark_id)}
+                                                onClick={() => handleDeleteClick(bookmark)}
+                                                aria-label="Delete bookmark"
                                             >
-                                                Delete
+                                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                                    <path d="M3 6h18" />
+                                                    <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                                                    <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+                                                </svg>
                                             </button>
                                         </div>
                                     </div>
-                                    <p className="bookmark-url">{bookmark.url}</p>
                                     {bookmark.notes && <p className="bookmark-notes">{bookmark.notes}</p>}
 
                                     <div className="bookmark-tags">
@@ -336,6 +388,15 @@ function Bookmarks() {
                 </ul>
             )}
             </div>
+            <ConfirmModal
+                open={!!deleteTarget}
+                title="Delete bookmark?"
+                message={deleteTarget ? `"${deleteTarget.title}" will be permanently removed.` : ''}
+                confirmLabel="Delete"
+                danger
+                onConfirm={handleDeleteConfirm}
+                onCancel={() => setDeleteTarget(null)}
+            />
         </>
     )
 }
