@@ -31,3 +31,20 @@ def client(session):
         yield c
 
     app.dependency_overrides.clear()
+
+
+@pytest.fixture
+def register_and_login(client):
+    def _register_and_login(username="alice", email="alice@example.com", password="password123"):
+        client.post(
+            "/users/register",
+            json={"username": username, "email": email, "password": password},
+        )
+        login_response = client.post(
+            "/users/login",
+            json={"email": email, "password": password},
+        )
+        token = login_response.json()["access_token"]
+        return {"Authorization": f"Bearer {token}"}
+
+    return _register_and_login

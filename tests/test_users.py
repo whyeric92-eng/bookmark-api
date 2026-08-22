@@ -106,28 +106,10 @@ def test_login_wrong_password(client):
     assert response.status_code == 401
 
 
-def test_get_profile_success(client):
-    client.post(
-        "/users/register",
-        json={
-            "username": "alice",
-            "email": "alice@example.com",
-            "password": "password123",
-        },
-    )
-    login_response = client.post(
-        "/users/login",
-        json={
-            "email": "alice@example.com",
-            "password": "password123",
-        },
-    )
-    token = login_response.json()["access_token"]
+def test_get_profile_success(client, register_and_login):
+    headers = register_and_login()
 
-    response = client.get(
-        "/users/profile",
-        headers={"Authorization": f"Bearer {token}"},
-    )
+    response = client.get("/users/profile", headers=headers)
 
     assert response.status_code == 200
 
@@ -142,27 +124,12 @@ def test_get_profile_no_token(client):
     assert response.status_code in (401, 403)
 
 
-def test_update_profile_success(client):
-    client.post(
-        "/users/register",
-        json={
-            "username": "alice",
-            "email": "alice@example.com",
-            "password": "password123",
-        },
-    )
-    login_response = client.post(
-        "/users/login",
-        json={
-            "email": "alice@example.com",
-            "password": "password123",
-        },
-    )
-    token = login_response.json()["access_token"]
+def test_update_profile_success(client, register_and_login):
+    headers = register_and_login()
 
     response = client.patch(
         "/users/profile",
-        headers={"Authorization": f"Bearer {token}"},
+        headers=headers,
         json={"username": "alice_updated"},
     )
 
