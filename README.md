@@ -59,6 +59,17 @@ This is a learning project. The goal is to practice core backend fundamentals �
 5. Start the API: `uv run fastapi dev app/main.py`
 6. Interactive docs at `/docs`
 
+## Testing
+
+- Run the suite: `uv run pytest`
+- Tests reuse the same Postgres from `docker compose up -d` instead of a separate test database. Each test runs inside a DB transaction that's rolled back afterward, so nothing persists — even though the app code itself calls `session.commit()`, thanks to SQLAlchemy's `join_transaction_mode="create_savepoint"` (see `tests/conftest.py`).
+- Coverage: register/login/profile, and full CRUD on bookmarks/tags — including the cross-user ownership checks (a resource created by one user returns 404 for another user).
+
+## CI
+
+- GitHub Actions (`.github/workflows/ci.yml`) runs the test suite on every push to `main` and every pull request.
+- The workflow spins up a throwaway Postgres service container, runs `uv run alembic upgrade head` to create the schema, then `uv run pytest`.
+
 ## Deployment
 
 | Component | Provider | URL |
