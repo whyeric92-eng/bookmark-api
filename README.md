@@ -75,8 +75,8 @@ This is a learning project. The goal is to practice core backend fundamentals â€
 | Component | Provider | URL |
 |---|---|---|
 | Database (Postgres) | [Neon](https://neon.tech) | â€” |
-| Backend (FastAPI) | [Render](https://render.com) (free tier) | https://bookmark-api-o75m.onrender.com |
-| Frontend (React/Vite) | [Vercel](https://vercel.com) (free tier) | https://bookmark-api-omega.vercel.app |
+| Backend (FastAPI) | [Render](https://render.com) | https://bookmark-api-o75m.onrender.com |
+| Frontend (React/Vite) | [Vercel](https://vercel.com) | https://bookmark-api-omega.vercel.app |
 
 ### Backend (Render)
 
